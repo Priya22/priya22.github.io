@@ -1,0 +1,65 @@
+import { defineCollection } from "astro:content";
+import { glob } from "astro/loaders";
+import { z } from "astro/zod";
+
+function removeDupsAndLowerCase(array: string[]) {
+	return [...new Set(array.map((str) => str.toLowerCase()))];
+}
+
+const titleSchema = z.string().max(200);
+
+const baseSchema = z.object({
+	title: titleSchema,
+});
+
+const post = defineCollection({
+	loader: glob({ base: "./content/posts", pattern: "**/*.{md,mdx}" }),
+	schema: ({ image }) =>
+		baseSchema.extend({
+			description: z.string(),
+			coverImage: z
+				.object({
+					alt: z.string(),
+					src: image(),
+				})
+				.optional(),
+			draft: z.boolean().default(false),
+			ogImage: z.string().optional(),
+			tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
+			publishDate: z
+				.string()
+				.or(z.date())
+				.transform((val) => new Date(val)),
+			updatedDate: z
+				.string()
+				.optional()
+				.transform((str) => (str ? new Date(str) : undefined)),
+			pinned: z.boolean().default(false),
+		}),
+});
+
+const note = defineCollection({
+	loader: glob({ base: "./content/notes", pattern: "**/*.{md,mdx}" }),
+	schema: baseSchema.extend({
+		title: z.string(),
+		authors: z.array(z.string().optional()).optional(),
+		venue: z.string().optional(),
+		publishDate: z.string().transform((val) => new Date(val)),
+		description: z.string().optional(),
+		// links
+		paper: z.url().optional(),
+		code: z.url().optional(),
+
+		featured: z.boolean().default(false),
+	}),
+});
+
+const tag = defineCollection({
+	loader: glob({ base: "./content/tags", pattern: "**/*.{md,mdx}" }),
+	schema: z.object({
+		title: titleSchema.optional(),
+		description: z.string().optional(),
+	}),
+});
+
+export const collections = { post, note, tag };

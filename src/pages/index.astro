@@ -1,0 +1,83 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import PostPreview from "@/components/blog/PostPreview.astro";
+import Note from "@/components/note/Note.astro";
+import SocialList from "@/components/SocialList.astro";
+import { getAllPosts } from "@/data/post";
+import PageLayout from "@/layouts/Base.astro";
+import Link from "@/components/Link.astro";
+import { collectionDateSort } from "@/utils/date";
+
+// // Posts
+// const MAX_POSTS = 10;
+// const allPosts = await getAllPosts();
+// const allPostsByDate = allPosts.sort(collectionDateSort) as CollectionEntry<"post">[];
+// const latestPosts = allPostsByDate.slice(0, MAX_POSTS);
+
+// // Pinned Posts, set to a max of 3;
+// const MAX_PINNED_POSTS = 3;
+// const pinnedPosts = allPostsByDate
+// 	.values()
+// 	.filter((p) => p.data.pinned)
+// 	.take(MAX_PINNED_POSTS)
+// 	.toArray();
+
+// // Notes, set to a max of 5
+// const MAX_NOTES = 5;
+// const allNotes = await getCollection("note");
+// const latestNotes = allNotes
+// 	.sort(collectionDateSort)
+// 	.slice(0, MAX_NOTES) as CollectionEntry<"note">[];
+---
+
+<PageLayout meta={{ title: "Home" }}>
+	<div class="flex flex-col gap-12">
+		<section>
+			<h1 class="title mb-12">About Me</h1>
+
+			<p>
+				I am a Research Associate at the National Research Council Canada, working on AI Safety
+				projects as part of the Canadian AI Safety Institute.
+			</p>
+			<p>
+				In light of recent events, <Link href="/posts/ai-safety-thoughts" , text="some thoughts" />.
+			</p>
+
+			<!-- <section>
+			<h2>In the Past</h2> -->
+			<p>
+				I graduated in 2024 with a PhD in Computer Science from the University of Toronto, where I
+				was advised by <Link href="http://www.cs.toronto.edu/~gh/" , text="Graeme Hirst" />,
+				<Link href="https://web.cs.dal.ca/~rudzicz/" , text="Frank Rudzicz" />, and{" "}
+				<Link href="https://adamhammond.com/" , text="Adam Hammond" />. My research focus was at the
+				intersection of natural language processing, sociolinguistics, and cognitive science (
+				<Link
+					href="https://www.cs.toronto.edu/pub/gh/Vishnubhotla-PhD-thesis-2024.pdf"
+					,
+					text="thesis here"
+				/>
+				).
+			</p>
+			<p>I like language.</p>
+		</section>
+		<!-- <section class="mt-16"> -->
+		<p>
+			Contact: krishnapriya[dot]vishnubhotla[at]nrc-crnc[dot]gc[dot]ca
+			<br />
+			Links:
+			<Link href="https://scholar.google.ca/citations?user=3d1JlZwAAAAJ&hl=en" , text="Scholar" /> |
+			<Link href="https://www.linkedin.com/in/krishnapriya-v/" , text="LinkedIn" /> |
+			<Link href="https://github.com/Priya22" , text="GitHub" />
+		</p>
+		<!-- <SocialList /> -->
+		<!-- </section> -->
+		<section>
+			<h2 class="title mb-6 text-xl">Education</h2>
+			<ul class="space-y-4" role="list">
+				<li>2019-2024 PhD in Computer Science, University of Toronto</li>
+				<li>2017-2019 MSc in Computer Science, University of Toronto</li>
+				<li>2013-2017 B.Tech in Computer Science and Engineering, NITK-Surathkal</li>
+			</ul>
+		</section>
+	</div>
+</PageLayout>

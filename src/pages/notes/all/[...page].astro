@@ -1,0 +1,68 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import type { GetStaticPaths, Page } from "astro";
+import { Icon } from "astro-icon/components";
+import Note from "@/components/note/Note.astro";
+import Pagination from "@/components/Paginator.astro";
+import PageLayout from "@/layouts/Base.astro";
+import NotesToggle from "@/components/NotesToggle.astro";
+import { getAllNotes } from "@/data/note";
+import Link from "@/components/Link.astro";
+
+import { collectionDateSort } from "@/utils/date";
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const MAX_NOTES_PER_PAGE = 10;
+	const allNotes = await getAllNotes();
+	const allNotesByDate = allNotes.sort(collectionDateSort);
+	return paginate(allNotesByDate, { pageSize: MAX_NOTES_PER_PAGE });
+}) satisfies GetStaticPaths;
+
+interface Props {
+	page: Page<CollectionEntry<"note">>;
+}
+
+const { page } = Astro.props;
+
+const meta = {
+	description: "Read my collection of papers",
+	title: "Papers",
+};
+
+const paginationProps = {
+	...(page.url.prev && {
+		prevUrl: {
+			text: "← Previous Page",
+			url: page.url.prev,
+		},
+	}),
+	...(page.url.next && {
+		nextUrl: {
+			text: "Next Page →",
+			url: page.url.next,
+		},
+	}),
+};
+---
+
+<PageLayout meta={meta}>
+	<section>
+		<h1 class="title mb-12 flex items-center gap-3">Publications</h1>
+
+		<NotesToggle active="all" />
+		<ul class="mt-6 space-y-8 text-start">
+			Please see my
+			<Link
+				href="https://scholar.google.ca/citations?hl=en&user=3d1JlZwAAAAJ&view_op=list_works&sortby=pubdate"
+				,
+				text=" Google Scholar"
+			/>
+			<!-- {page.data.map((note) => (
+				<li>
+					<Note note={note} as="h2" isPreview />
+				</li>
+			))} -->
+		</ul>
+		<Pagination {...paginationProps} />
+	</section>
+</PageLayout>

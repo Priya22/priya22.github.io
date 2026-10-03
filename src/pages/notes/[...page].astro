@@ -1,0 +1,84 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+// import { Note, NotePreview } from "@/components/note/Note.astro";
+import type { GetStaticPaths, Page } from "astro";
+import NotesToggle from "@/components/NotesToggle.astro";
+import PageLayout from "@/layouts/Base.astro";
+import Pagination from "@/components/Paginator.astro";
+import { collectionDateSort } from "@/utils/date";
+import { getFeaturedNotes } from "@/data/note";
+import NotePreview from "@/components/note/NotePreview.astro";
+import Link from "@/components/Link.astro";
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const MAX_NOTES_PER_PAGE = 8;
+	const selectedNotes = (await getFeaturedNotes()).filter((note) => !note.id.startsWith("other/"));
+	const allNotesByDate = selectedNotes.sort(collectionDateSort);
+	return paginate(allNotesByDate, { pageSize: MAX_NOTES_PER_PAGE });
+}) satisfies GetStaticPaths;
+
+interface Props {
+	page: Page<CollectionEntry<"note">>;
+}
+
+const { page } = Astro.props;
+const otherNotes = (await getCollection("note"))
+	.filter((note) => note.id.startsWith("other/"))
+	.sort(collectionDateSort);
+
+const meta = {
+	description: "Read my collection of papers",
+	title: "Papers",
+};
+
+const paginationProps = {
+	...(page.url.prev && {
+		prevUrl: {
+			text: "← Previous Page",
+			url: page.url.prev,
+		},
+	}),
+	...(page.url.next && {
+		nextUrl: {
+			text: "Next Page →",
+			url: page.url.next,
+		},
+	}),
+};
+---
+
+<PageLayout meta={meta}>
+	<section class="mb-16">
+		<h1 class="title mb-12 flex items-center gap-3">Selected Publications</h1>
+		<p>
+			Please see my{" "}
+			<Link
+				text="Scholar page"
+				,
+				href="https://scholar.google.ca/citations?user=3d1JlZwAAAAJ&hl=en"
+			/>{" "}
+			for a complete list.
+		</p>
+
+		<!-- <NotesToggle active="featured" /> -->
+		<ul class="mt-6 list-disc space-y-8 pl-5 text-start">
+			{page.data.map((note) => (
+				<li>
+					<NotePreview note={note} as="h2" />
+				</li>
+			))}
+		</ul>
+		<Pagination {...paginationProps} />
+	</section>
+
+	<section>
+		<h1 class="title mb-12 flex items-center gap-3">Other Light Readings</h1>
+		<ul class="mt-6 list-disc space-y-8 pl-5 text-start">
+			{otherNotes.map((note) => (
+				<li>
+					<NotePreview note={note} as="h2" />
+				</li>
+			))}
+		</ul>
+	</section>
+</PageLayout>

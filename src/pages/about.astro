@@ -1,0 +1,29 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+
+const meta = {
+	description: "Who am I? What do I do?",
+	title: "About Me",
+};
+---
+
+<PageLayout meta={meta}>
+	<h1 class="title mb-12">About Me</h1>
+	<div class="prose prose-sm prose-cactus max-w-none">
+		<p>
+			I am a Research Associate at the National Research Council Canada, working on AI Safety
+			projects as part of the Canadian AI Safety Institute. In light of recent events, my thoughts
+			on AI Safety.
+		</p>
+		<p>
+			I graduated with a PhD in Computer Science in 2024 from the University of Toronto, where I was
+			part of the [Computational Linguistics group](https://www.cs.toronto.edu/compling/),
+			supervised by [Graeme Hirst](http://www.cs.toronto.edu/~gh/) and [Frank
+			Rudzicz](http://www.cs.toronto.edu/~frank/). My PhD projects focused on modelling variation in
+			language use as a function of speaker identity, a research area that falls at the intersection
+			of natural language processing, sociolinguistics, and cognitive science (thesis
+			[here](https://www.cs.toronto.edu/pub/gh/Vishnubhotla-PhD-thesis-2024.pdf)!).
+		</p>
+		<p>I like language.</p>
+	</div>
+</PageLayout>

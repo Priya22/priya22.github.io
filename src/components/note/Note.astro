@@ -1,0 +1,72 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { HTMLTag, Polymorphic } from "astro/types";
+import FormattedDate from "@/components/FormattedDate.astro";
+
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
+	note: CollectionEntry<"note">;
+	isPreview?: boolean | undefined;
+};
+
+const { as: Tag = "div", note, isPreview = false } = Astro.props;
+const authors = note.data.authors ?? [];
+---
+
+<article
+	class:list={[
+		"border-l border-zinc-200 pl-3 py-1 dark:border-zinc-700",
+		isPreview &&
+			"rounded-md border border-zinc-200 bg-zinc-50/60 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900/60",
+	]}
+	data-pagefind-body={isPreview ? false : true}
+>
+	<div class="flex flex-col gap-1">
+		<Tag class:list={["title !mb-0 leading-tight", isPreview ? "text-base" : "text-xl"]}>
+			{isPreview ? (
+				<a class="cactus-link" href={`/notes/${note.id}/`}>
+					{note.data.title}
+				</a>
+			) : (
+				note.data.title
+			)}
+		</Tag>
+
+		{authors.length > 0 && (
+			<p class="text-sm text-zinc-700 dark:text-zinc-200">{authors.join(", ")}</p>
+		)}
+
+		{note.data.venue && (
+			<p class="text-xs uppercase tracking-[0.08em] text-zinc-500 dark:text-zinc-400">
+				<span class="italic normal-case tracking-normal">{note.data.venue}</span>
+				{note.data.publishDate && <span class="mx-1.5 text-zinc-400">•</span>}
+				<FormattedDate
+					dateTimeOptions={{
+						year: "numeric",
+					}}
+					date={note.data.publishDate}
+				/>
+			</p>
+		)}
+
+		{(note.data.paper || note.data.code) && (
+			<p class="mt-0.5 flex flex-wrap gap-x-4 gap-y-1 text-sm text-zinc-600 dark:text-zinc-300">
+				{note.data.paper && (
+					<a class="cactus-link" href={note.data.paper} target="_blank" rel="noreferrer">
+						PDF
+					</a>
+				)}
+				{note.data.code && (
+					<a class="cactus-link" href={note.data.code} target="_blank" rel="noreferrer">
+						Code
+					</a>
+				)}
+			</p>
+		)}
+
+		{note.data.description && (
+			<p class="mt-1 text-base leading-relaxed text-zinc-700 dark:text-zinc-200">
+				{note.data.description}
+			</p>
+		)}
+	</div>
+</article>
