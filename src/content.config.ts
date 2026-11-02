@@ -47,7 +47,7 @@ const note = defineCollection({
 		publishDate: z.string().transform((val) => new Date(val)),
 		description: z.string().optional(),
 		// links
-		paper: z.url().optional(),
+		paper: z.union([z.url(), z.string().endsWith(".pdf")]).optional(),
 		code: z.url().optional(),
 
 		featured: z.boolean().default(false),
